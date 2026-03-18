@@ -1,14 +1,18 @@
 <?php
+session_start();
+
 if (isset($_POST ["submit"])){
 
     $username = $_POST['user'];
     $password = $_POST['pass'];
 
     if($username == 'admin' && $password == "password"){
-        header("Location: Billing.php");
+        $_SESSION['admin_logged_in'] = true;
+        header("Location: admin-dashboard.php");
+        exit();
     }
     else{
-        echo "Username or Password is incorrect!";
+        $error_msg = "Username or Password is incorrect!";
     }
 
 }
@@ -158,22 +162,25 @@ if (isset($_POST ["submit"])){
 <section class="login">
 		<div class="login_box">
 			<div class="left">
-				<div class="top_link"><a href="index.html"><img src="https://drive.google.com/u/0/uc?id=16U__U5dJdaTfNGobB_OpwAJ73vM50rPV&export=download" alt="">Return home</a></div>
-				<div class="contact">
-					<form action="billing.php" method="post">
+				<div class="top_link"><a href="index.html"><img src="TT.png" alt="">Return home</a></div>
+				<div class="contact">				<?php if (isset($error_msg)): ?>
+					<div style="color: #d32f2f; background-color: #ffebee; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-weight: 600;">
+						<?php echo $error_msg; ?>
+					</div>
+				<?php endif; ?>					<form action="admin-login.php" method="post">
 						<h3>SIGN IN</h3>
-						<input type="text" name="user"placeholder="USERNAME">
-						<input type="text" name ="pass"placeholder="PASSWORD">
-						<button class="submit">LET'S GO</button>
+						<input type="text" name="user" placeholder="USERNAME" required>
+						<input type="password" name="pass" placeholder="PASSWORD" required>
+						<button type="submit" name="submit" class="submit">LET'S GO</button>
 					</form>
 				</div>
 			</div>
 			<div class="right">
 				<div class="right-text">
-					<h2>TUITIONS TONIGHT</h2>
+					<h2>Fitness Forge</h2>
 					<h5>GYM MANAGEMENT SYSTEM</h5>
 				</div>
-				<div class="right-inductor"><img src="https://lh3.googleusercontent.com/fife/ABSRlIoGiXn2r0SBm7bjFHea6iCUOyY0N2SrvhNUT-orJfyGNRSMO2vfqar3R-xs5Z4xbeqYwrEMq2FXKGXm-l_H6QAlwCBk9uceKBfG-FjacfftM0WM_aoUC_oxRSXXYspQE3tCMHGvMBlb2K1NAdU6qWv3VAQAPdCo8VwTgdnyWv08CmeZ8hX_6Ty8FzetXYKnfXb0CTEFQOVF4p3R58LksVUd73FU6564OsrJt918LPEwqIPAPQ4dMgiH73sgLXnDndUDCdLSDHMSirr4uUaqbiWQq-X1SNdkh-3jzjhW4keeNt1TgQHSrzW3maYO3ryueQzYoMEhts8MP8HH5gs2NkCar9cr_guunglU7Zqaede4cLFhsCZWBLVHY4cKHgk8SzfH_0Rn3St2AQen9MaiT38L5QXsaq6zFMuGiT8M2Md50eS0JdRTdlWLJApbgAUqI3zltUXce-MaCrDtp_UiI6x3IR4fEZiCo0XDyoAesFjXZg9cIuSsLTiKkSAGzzledJU3crgSHjAIycQN2PH2_dBIa3ibAJLphqq6zLh0qiQn_dHh83ru2y7MgxRU85ithgjdIk3PgplREbW9_PLv5j9juYc1WXFNW9ML80UlTaC9D2rP3i80zESJJY56faKsA5GVCIFiUtc3EewSM_C0bkJSMiobIWiXFz7pMcadgZlweUdjBcjvaepHBe8wou0ZtDM9TKom0hs_nx_AKy0dnXGNWI1qftTjAg=w1920-h979-ft" alt=""></div>
+				<div class="right-inductor"><img src="TT.png" alt=""></div>
 			</div>
 		</div>
 	</section>

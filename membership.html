@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership - Fitness Forge</title>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+      body {
+        background: radial-gradient(#653d84, #332042);
+        color: #fff;
+        font-weight: bold;
+      }
+      .navbar, .table, .form-control, .btn, h1, h2, label {
+        font-weight: bold;
+      }
+      .table th, .table td {
+        color: #000;
+      }
+    </style>
+</head>
+<body>
+
+<!-- nav bar start -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="admin-login.html"><img src="img/TT.png" alt="Fitness Forge Logo"></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Gym Management System</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="billing.html">Billing</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="coach.html">Coach</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="members.html">Member</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="receptionist.html">Receptionist</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="membership.html">Membership</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<!-- nav bar end     -->
+
+<main class="container my-5">
+    <h1 class="mb-4">Membership</h1>
+
+    <form id="membershipForm" class="mb-4">
+      <div class="form-group">
+        <label for="memberSelect">Select Member</label>
+        <select class="form-control" id="memberSelect" required>
+          <option value="">Choose a member...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="packageType">Package Type</label>
+        <select class="form-control" id="packageType" required>
+          <option value="3">3 Months</option>
+          <option value="6">6 Months</option>
+          <option value="12">12 Months</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="startDate">Start Date</label>
+        <input type="date" class="form-control" id="startDate" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Save Membership</button>
+      <span id="saveMsg" class="ml-3 text-success" style="display:none;">Saved!</span>
+    </form>
+
+    <h2 class="h4">Memberships</h2>
+    <div class="table-responsive">
+      <table class="table table-bordered" id="membershipsTable">
+        <thead class="thead-light">
+          <tr>
+            <th>Member ID</th>
+            <th>Member Name</th>
+            <th>Package</th>
+            <th>Start Date</th>
+            <th>Expiry Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script>
+    const form = document.getElementById('membershipForm');
+    const memberSelect = document.getElementById('memberSelect');
+    const tableBody = document.querySelector('#membershipsTable tbody');
+    const saveMsg = document.getElementById('saveMsg');
+
+    function loadMembers() {
+      const members = JSON.parse(localStorage.getItem('members') || '[]');
+      memberSelect.innerHTML = '<option value="">Choose a member...</option>';
+      members.forEach(m => {
+        const option = document.createElement('option');
+        option.value = m.id;
+        option.textContent = `${m.id} - ${m.name}`;
+        memberSelect.appendChild(option);
+      });
+    }
+
+    function calculateExpiry(startDate, months) {
+      const date = new Date(startDate);
+      date.setMonth(date.getMonth() + parseInt(months));
+      return date.toISOString().split('T')[0];
+    }
+
+    function loadMemberships() {
+      const memberships = JSON.parse(localStorage.getItem('memberships') || '[]');
+      const members = JSON.parse(localStorage.getItem('members') || '[]');
+      const memberMap = {};
+      members.forEach(m => memberMap[m.id] = m.name);
+
+      tableBody.innerHTML = '';
+      memberships.forEach(mem => {
+        const expiry = new Date(mem.expiry);
+        const today = new Date();
+        const status = expiry < today ? 'Expired' : 'Active';
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${mem.memberId}</td><td>${memberMap[mem.memberId] || 'Unknown'}</td><td>${mem.package} Months</td><td>${mem.start}</td><td>${mem.expiry}</td><td class="${status === 'Expired' ? 'text-danger' : 'text-success'}">${status}</td>`;
+        tableBody.appendChild(row);
+      });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const membership = {
+        memberId: document.getElementById('memberSelect').value,
+        package: document.getElementById('packageType').value,
+        start: document.getElementById('startDate').value,
+        expiry: calculateExpiry(document.getElementById('startDate').value, document.getElementById('packageType').value)
+      };
+
+      const memberships = JSON.parse(localStorage.getItem('memberships') || '[]');
+      memberships.push(membership);
+      localStorage.setItem('memberships', JSON.stringify(memberships));
+
+      saveMsg.style.display = 'inline';
+      setTimeout(() => (saveMsg.style.display = 'none'), 1400);
+
+      form.reset();
+      loadMemberships();
+    });
+
+    loadMembers();
+    loadMemberships();
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "GymManagementSystem",
+  "version": "1.0.0",
+  "description": "Gym Management System with Attendance Tracking",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql": "^2.18.1",
+    "body-parser": "^1.20.2",
+    "path": "^0.12.7"
+  }
+}

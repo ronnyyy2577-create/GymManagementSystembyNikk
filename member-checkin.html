@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Check-in - Gym Management System</title>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo-section img {
+            height: 60px;
+            margin-bottom: 15px;
+        }
+        .logo-section h1 {
+            color: #583672;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .logo-section p {
+            color: #999;
+            margin: 5px 0 0 0;
+            font-size: 14px;
+        }
+        .form-group label {
+            color: #583672;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .form-control {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 5px;
+            font-weight: bold;
+        }
+        .form-control:focus {
+            border-color: #583672;
+            box-shadow: 0 0 0 0.2rem rgba(88, 54, 114, 0.25);
+        }
+        .checkin-btn {
+            background: #583672;
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .checkin-btn:hover {
+            background: #4a2a5a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 54, 114, 0.4);
+        }
+        .success-msg {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+        .error-msg {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+        .member-info {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #583672;
+            display: none;
+        }
+        .member-info h5 {
+            color: #583672;
+            margin-bottom: 10px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 14px;
+        }
+        .info-label {
+            color: #999;
+        }
+        .info-value {
+            font-weight: 600;
+            color: #333;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .status-checked-in {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .admin-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+        .admin-link a {
+            color: #583672;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .admin-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <!-- Logo Section -->
+    <div class="logo-section">
+        <img src="img/TT.png" alt="Gym Logo">
+        <h1>Gym Check-in</h1>
+        <p>Enter your 4-digit member code</p>
+    </div>
+
+    <!-- Messages -->
+    <div class="success-msg" id="successMsg"></div>
+    <div class="error-msg" id="errorMsg"></div>
+
+    <!-- Check-in Form -->
+    <form id="checkinForm">
+        <div class="form-group">
+            <label for="memberCode">Member Code</label>
+            <input 
+                type="text" 
+                class="form-control" 
+                id="memberCode" 
+                placeholder="0000" 
+                maxlength="4" 
+                pattern="\d{4}" 
+                inputmode="numeric"
+                autofocus
+                required
+            >
+        </div>
+        <button type="submit" class="checkin-btn">✓ Check In</button>
+    </form>
+
+    <!-- Member Info (appears after successful check-in) -->
+    <div id="memberInfo" class="member-info">
+        <h5>✓ Check-in Successful!</h5>
+        <div class="info-row">
+            <span class="info-label">Member:</span>
+            <span class="info-value" id="infoName">-</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Member ID:</span>
+            <span class="info-value" id="infoId">-</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Check-in Time:</span>
+            <span class="info-value" id="infoTime">-</span>
+        </div>
+        <span class="status-badge status-checked-in">✓ Checked In</span>
+    </div>
+
+    <!-- Admin Link -->
+    <div class="admin-link">
+        <a href="admin-dashboard.html">← Go to Admin Dashboard</a>
+    </div>
+</div>
+
+<script>
+// Get current time in HH:MM format
+function getCurrentTime() {
+    const now = new Date();
+    return String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+}
+
+// Get today's date in DD-MM-YYYY format
+function getTodayDate() {
+    const now = new Date();
+    return String(now.getDate()).padStart(2, '0') + '-' + 
+           String(now.getMonth() + 1).padStart(2, '0') + '-' +
+           now.getFullYear();
+}
+
+// Handle form submission
+document.getElementById('checkinForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const code = document.getElementById('memberCode').value.trim();
+    const successMsg = document.getElementById('successMsg');
+    const errorMsg = document.getElementById('errorMsg');
+    const memberInfo = document.getElementById('memberInfo');
+    const form = document.getElementById('checkinForm');
+    
+    // Reset messages
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
+    memberInfo.style.display = 'none';
+    
+    // Validate code format
+    if (!/^\d{4}$/.test(code)) {
+        errorMsg.textContent = '❌ Please enter exactly 4 digits!';
+        errorMsg.style.display = 'block';
+        return;
+    }
+    
+    // Get all members from localStorage
+    const members = JSON.parse(localStorage.getItem('gymMembers') || '[]');
+    
+    // Find member by code
+    const member = members.find(m => m.code === code);
+    
+    if (!member) {
+        errorMsg.textContent = '❌ Member code not found! Please check your code.';
+        errorMsg.style.display = 'block';
+        document.getElementById('memberCode').value = '';
+        document.getElementById('memberCode').focus();
+        return;
+    }
+    
+    // Record attendance
+    const currentTime = getCurrentTime();
+    const today = getTodayDate();
+    
+    let records = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
+    
+    // Check if already checked in today
+    const existingRecord = records.find(r => r.memberId === member.id && r.date === today);
+    
+    if (!existingRecord) {
+        // Create new attendance record
+        records.push({
+            memberId: member.id,
+            memberName: member.name,
+            date: today,
+            status: 'Present',
+            checkIn: currentTime,
+            checkOut: ''
+        });
+    } else {
+        // Member already checked in today, just update (don't duplicate)
+        existingRecord.checkIn = currentTime;
+    }
+    
+    localStorage.setItem('attendanceRecords', JSON.stringify(records));
+    
+    // Show success message
+    successMsg.textContent = '✅ ' + member.name + ' checked in successfully at ' + currentTime + '!';
+    successMsg.style.display = 'block';
+    
+    // Display member info
+    document.getElementById('infoName').textContent = member.name;
+    document.getElementById('infoId').textContent = member.id;
+    document.getElementById('infoTime').textContent = currentTime;
+    memberInfo.style.display = 'block';
+    
+    // Reset form
+    document.getElementById('memberCode').value = '';
+    
+    // Hide form and auto-focus after 2 seconds
+    form.style.opacity = '0.5';
+    setTimeout(() => {
+        form.style.opacity = '1';
+        document.getElementById('memberCode').focus();
+    }, 2000);
+});
+
+// Validate input to allow only digits
+document.getElementById('memberCode').addEventListener('input', function(e) {
+    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+});
+
+// Auto-focus on load
+window.addEventListener('load', function() {
+    document.getElementById('memberCode').focus();
+});
+</script>
+
+</body>
+</html>

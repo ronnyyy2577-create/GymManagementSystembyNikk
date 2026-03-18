@@ -108,6 +108,32 @@ CREATE TABLE `receptionist` (
 
 INSERT INTO `receptionist` (`id`, `name`, `date`, `address`, `phone`) VALUES
 ('1', 'Srasvati', '12-06-2002', 'sadasdsadasdasdasdas', 'sada');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `attendance`
+--
+
+CREATE TABLE `attendance` (
+  `attendance_id` int(11) NOT NULL AUTO_INCREMENT,
+  `member_id` varchar(20) NOT NULL,
+  `member_name` varchar(50) NOT NULL,
+  `attendance_date` varchar(20) NOT NULL,
+  `status` varchar(20) NOT NULL,
+  `check_in_time` varchar(10),
+  `check_out_time` varchar(10),
+  PRIMARY KEY (`attendance_id`),
+  FOREIGN KEY (`member_id`) REFERENCES `member`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `attendance`
+--
+
+INSERT INTO `attendance` (`member_id`, `member_name`, `attendance_date`, `status`, `check_in_time`, `check_out_time`) VALUES
+('1', 'Taayyab', '12-06-2024', 'Present', '06:00 AM', '07:30 AM');
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

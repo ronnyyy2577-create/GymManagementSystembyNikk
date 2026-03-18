@@ -1,0 +1,309 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['admin_logged_in'])) {
+    // Try to get from POST data for first-time login
+    if (!isset($_POST['admin_login'])) {
+        header("Location: admin-login.php");
+        exit();
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Gym Management System</title>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar-custom {
+            background: linear-gradient(90deg, #583672 0%, #3d2757 100%);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-custom .navbar-brand img {
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        .navbar-custom .navbar-text {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background-color: #d32f2f !important;
+            color: white !important;
+            border-radius: 5px;
+            padding: 8px 20px !important;
+            margin-left: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #b71c1c !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(211, 47, 47, 0.4);
+        }
+
+        .dashboard-container {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .welcome-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-section h1 {
+            color: #583672;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .welcome-section p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            text-decoration: none;
+            color: #333;
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #583672;
+        }
+
+        .dashboard-card h3 {
+            color: #583672;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .dashboard-card p {
+            color: #999;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .card-attendance .card-icon {
+            color: #4CAF50;
+        }
+
+        .card-attendance h3 {
+            color: #4CAF50;
+        }
+
+        .card-members .card-icon {
+            color: #2196F3;
+        }
+
+        .card-members h3 {
+            color: #2196F3;
+        }
+
+        .card-coach .card-icon {
+            color: #FF9800;
+        }
+
+        .card-coach h3 {
+            color: #FF9800;
+        }
+
+        .card-billing .card-icon {
+            color: #9C27B0;
+        }
+
+        .card-billing h3 {
+            color: #9C27B0;
+        }
+
+        .card-receptionist .card-icon {
+            color: #F44336;
+        }
+
+        .card-receptionist h3 {
+            color: #F44336;
+        }
+
+        .footer-section {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            margin-top: 40px;
+        }
+
+        .feature-badge {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-section {
+                padding: 20px;
+            }
+
+            .dashboard-card {
+                padding: 20px;
+            }
+
+            .card-icon {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">
+            <img src="img/TT.png" alt="Gym Logo">
+            <span class="navbar-text">Gym Management System</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon" style="filter: brightness(0) invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <span class="navbar-text">Welcome, Admin</span>
+                </li>
+                <li class="nav-item">
+                    <a href="admin-logout.php" class="btn logout-btn">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h1>Welcome to Admin Dashboard</h1>
+        <p>Manage your gym efficiently with our comprehensive management system. Select a feature below to get started.</p>
+    </div>
+
+    <!-- Dashboard Cards Grid -->
+    <div class="dashboard-grid">
+        
+        <!-- Attendance Card -->
+        <a href="attendance.php" class="dashboard-card card-attendance">
+            <div class="card-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <h3>Attendance</h3>
+            <p>Track and manage member attendance</p>
+            <span class="feature-badge">NEW</span>
+        </a>
+
+        <!-- Members Card -->
+        <a href="members.php" class="dashboard-card card-members">
+            <div class="card-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3>Members</h3>
+            <p>Add and manage gym members</p>
+        </a>
+
+        <!-- Coach Card -->
+        <a href="coach.php" class="dashboard-card card-coach">
+            <div class="card-icon">
+                <i class="fas fa-dumbbell"></i>
+            </div>
+            <h3>Coaches</h3>
+            <p>Manage coaching staff</p>
+        </a>
+
+        <!-- Billing Card -->
+        <a href="billing.php" class="dashboard-card card-billing">
+            <div class="card-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <h3>Billing</h3>
+            <p>Manage member billing and payments</p>
+        </a>
+
+        <!-- Receptionist Card -->
+        <a href="receptionist.php" class="dashboard-card card-receptionist">
+            <div class="card-icon">
+                <i class="fas fa-phone"></i>
+            </div>
+            <h3>Receptionist</h3>
+            <p>Manage receptionist staff</p>
+        </a>
+
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="footer-section">
+    <p>&copy; 2024 Fitness Forge Gym Management System. All rights reserved.</p>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+
+</body>
+</html>

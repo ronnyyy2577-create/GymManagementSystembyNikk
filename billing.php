@@ -29,11 +29,14 @@ if (isset($_REQUEST["submit"])) {
     
 <!-- nav bar start -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="admin-login.php"><img src="img/TT.png" alt=""></a>
-<div class="collapse navbar-collapse" id="navbarNav">
+  <a class="navbar-brand" href="admin-dashboard.php"><img src="img/TT.png" alt="Gym Logo"> Admin Panel</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Gym Mananagement System</a>
+      <li class="nav-item">
+        <a class="nav-link" href="admin-dashboard.php">Dashboard</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="coach.php">Coach</a>
@@ -41,14 +44,17 @@ if (isset($_REQUEST["submit"])) {
       <li class="nav-item">
         <a class="nav-link" href="members.php">Members</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="membership.php">Membership</a>
+      <li class="nav-item active">
+        <a class="nav-link" href="billing.php">Billing</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link disabled" href="receptionist.php">receptionist</a>
+        <a class="nav-link" href="attendance.php">Attendance</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link disabled" href="biling.php">billing</a>
+        <a class="nav-link" href="receptionist.php">Receptionist</a>
+      </li>
+      <li class="nav-item ml-auto">
+        <a class="nav-link" href="admin-logout.php" style="color: #d32f2f; font-weight: 600;">Logout</a>
       </li>
     </ul>
   </div>
